@@ -1,0 +1,31 @@
+# Agent roster. type: <module>.<ClassName> relative to agents/
+agents:
+  - name: opportunity_scout
+    type: revenue.opportunity_scout.OpportunityScout
+    enabled: true
+    schedule: "0 9 * * MON"        # weekly Monday 9 AM
+
+  - name: project_manager
+    type: pm.project_manager.ProjectManager
+    enabled: true
+    on_demand: true
+
+  - name: security_auditor
+    type: security.security_auditor.SecurityAuditor
+    enabled: true
+    schedule: "0 0 * * *"          # daily midnight
+
+  - name: maintenance_bot
+    type: maintenance.maintenance_bot.MaintenanceBot
+    enabled: true
+    schedule: "0 3 * * *"          # daily 3 AM
+
+  - name: notifier
+    type: notification.notifier.Notifier
+    enabled: true
+    on_demand: true
+
+  - name: builder
+    type: builder.builder_agent.BuilderAgent
+    enabled: true
+    on_demand: true                # triggered by voting executor

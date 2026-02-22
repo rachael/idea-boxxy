@@ -1,0 +1,26 @@
+budget:
+  daily_token_limit: 100000
+  alert_threshold: 0.8       # warn at 80%
+  hard_stop: true            # block at 100%
+
+models:
+  cheap: claude-haiku-4-5-20251001    # default — most tasks
+  balanced: claude-sonnet-4-6          # complex reasoning
+  powerful: claude-opus-4-6            # critical / rare tasks
+
+voting:
+  interval_days: 7
+  min_voters: 1
+  approval_avg_score: 3      # ideas averaging >= 3/5 get approved
+
+revenue:
+  target_monthly_usd: 50
+  reinvestment_ratio: 0.6    # 60% of revenue added back to token budget
+
+paths:
+  data: ./data
+  logs: ./logs
+
+logging:
+  level: INFO
+  json: false
