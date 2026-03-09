@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Boxxy</title>
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a24;
+            --surface2: #24243a;
+            --accent: #a78bfa;
+            --accent2: #818cf8;
+            --green: #34d399;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --cyan: #22d3ee;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border: #2d2d44;
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
+        }
+
+        header p { color: var(--text-dim); font-size: 1rem; }
+
+        #interests-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .interest-chip {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { border-color: var(--accent); background: var(--surface2); }
+        .btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+        .btn.primary:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Direction input */
+        .direction-input {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .direction-input input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .direction-input input:focus { outline: none; border-color: var(--accent); }
+        .direction-input input::placeholder { color: var(--text-dim); }
+
+        /* Direction suggestions */
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .suggestion-chip {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            color: var(--cyan);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover { border-color: var(--cyan); background: var(--surface2); }
+
+        /* Idea cards */
+        .idea-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .idea-card:hover { border-color: var(--accent); }
+
+        .idea-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .idea-card .category {
+            display: inline-block;
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .idea-card .one-liner {
+            color: var(--text-dim);
+            font-style: italic;
+            margin-bottom: 0.8rem;
+        }
+
+        .idea-card .description { margin-bottom: 1rem; line-height: 1.6; }
+
+        .idea-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .idea-meta dt { color: var(--text-dim); font-weight: 600; }
+        .idea-meta dd { margin-bottom: 0.3rem; }
+
+        .idea-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: var(--surface2);
+            border-radius: 4px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.75rem;
+            color: var(--accent2);
+        }
+
+        /* Reaction buttons */
+        .reactions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .react-btn {
+            padding: 0.4rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface2);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+        }
+
+        .react-btn:hover { transform: translateY(-1px); }
+        .react-btn.love:hover, .react-btn.love.active { border-color: var(--red); color: var(--red); }
+        .react-btn.like:hover, .react-btn.like.active { border-color: var(--green); color: var(--green); }
+        .react-btn.meh:hover, .react-btn.meh.active { color: var(--text-dim); border-color: var(--text-dim); }
+        .react-btn.dislike:hover, .react-btn.dislike.active { border-color: var(--red); color: var(--red); opacity: 0.7; }
+        .react-btn.save:hover, .react-btn.save.active { border-color: var(--yellow); color: var(--yellow); }
+        .react-btn.explore:hover, .react-btn.explore.active { border-color: var(--cyan); color: var(--cyan); }
+
+        /* Loading */
+        .spinner {
+            display: inline-block;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-overlay {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-dim);
+        }
+
+        /* Explore panel */
+        .explore-panel {
+            background: var(--surface2);
+            border: 1px solid var(--cyan);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .explore-panel h4 {
+            color: var(--cyan);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .explore-panel h5 {
+            color: var(--accent);
+            margin: 1rem 0 0.5rem;
+        }
+
+        .explore-panel ul { padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        .explore-panel li { margin-bottom: 0.3rem; line-height: 1.5; }
+        .explore-panel p { line-height: 1.6; margin-bottom: 0.5rem; }
+
+        /* Profile panel */
+        .profile-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .interest-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .interest-bar-label {
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .interest-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .interest-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--cyan));
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .interest-bar-pct {
+            min-width: 40px;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Sections */
+        #ideas-container { min-height: 200px; }
+        .section-title { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1rem; }
+
+        /* Tab-like view */
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .idea-meta { grid-template-columns: 1fr; }
+            .actions { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Idea Boxxy</h1>
+            <p>App Idea Generator</p>
+            <div id="interests-bar"></div>
+        </header>
+
+        <div class="actions">
+            <button class="btn primary" onclick="generateOpen()">Generate Ideas</button>
+            <button class="btn" onclick="showDirections()">Choose Direction</button>
+            <button class="btn" onclick="toggleView('saved')">Saved Ideas</button>
+            <button class="btn" onclick="toggleView('profile')">My Profile</button>
+        </div>
+
+        <div id="direction-section" style="display:none">
+            <div class="suggestions" id="suggestions"></div>
+            <div class="direction-input">
+                <input type="text" id="direction-input" placeholder="Or type your own direction..."
+                       onkeydown="if(event.key==='Enter')generateWithDirection()">
+                <button class="btn primary" onclick="generateWithDirection()">Go</button>
+            </div>
+        </div>
+
+        <div id="main-view" class="view active">
+            <div id="ideas-container"></div>
+        </div>
+
+        <div id="saved-view" class="view">
+            <h2 class="section-title">Saved Ideas</h2>
+            <div id="saved-container"></div>
+        </div>
+
+        <div id="profile-view" class="view">
+            <h2 class="section-title">Your Interest Profile</h2>
+            <div id="profile-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = '';
+        let generatedTitles = [];
+        let currentView = 'main';
+
+        // ── API helpers ──
+
+        async function api(path, opts = {}) {
+            const resp = await fetch(API + path, {
+                headers: { 'Content-Type': 'application/json' },
+                ...opts,
+                body: opts.body ? JSON.stringify(opts.body) : undefined,
+            });
+            return resp.json();
+        }
+
+        // ── Init ──
+
+        async function init() {
+            await api('/api/session', { method: 'POST', body: {} });
+            loadInterests();
+        }
+
+        async function loadInterests() {
+            const interests = await api('/api/interests');
+            const bar = document.getElementById('interests-bar');
+            if (interests.length === 0) {
+                bar.innerHTML = '<span style="color:var(--text-dim);font-style:italic">I\'ll learn your interests as you react to ideas</span>';
+            } else {
+                bar.innerHTML = interests.slice(0, 8).map(i =>
+                    `<span class="interest-chip">${i.topic}</span>`
+                ).join('');
+            }
+        }
+
+        // ── Views ──
+
+        function toggleView(name) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const view = document.getElementById(name + '-view');
+            view.classList.add('active');
+            currentView = name;
+            document.getElementById('direction-section').style.display = 'none';
+
+            if (name === 'saved') loadSaved();
+            if (name === 'profile') loadProfile();
+        }
+
+        function showMain() {
+            toggleView('main');
+        }
+
+        // ── Generate ──
+
+        async function generateOpen() {
+            showMain();
+            document.getElementById('direction-section').style.display = 'none';
+            await generate();
+        }
+
+        async function showDirections() {
+            showMain();
+            const section = document.getElementById('direction-section');
+            section.style.display = 'block';
+            const sugEl = document.getElementById('suggestions');
+            sugEl.innerHTML = '<div class="spinner"></div> Thinking of directions...';
+
+            const dirs = await api('/api/directions');
+            sugEl.innerHTML = dirs.map(d =>
+                `<span class="suggestion-chip" onclick="pickDirection('${d.replace(/'/g, "\\'")}')">${d}</span>`
+            ).join('');
+        }
+
+        function pickDirection(dir) {
+            document.getElementById('direction-input').value = dir;
+            generateWithDirection();
+        }
+
+        async function generateWithDirection() {
+            const input = document.getElementById('direction-input');
+            const direction = input.value.trim();
+            if (!direction) return;
+            document.getElementById('direction-section').style.display = 'none';
+            input.value = '';
+            await generate(direction);
+        }
+
+        async function generate(direction = null) {
+            const container = document.getElementById('ideas-container');
+            container.innerHTML = `
+                <div class="loading-overlay">
+                    <div class="spinner"></div>
+                    <p style="margin-top:1rem">Brainstorming${direction ? ': ' + direction : ''}...</p>
+                </div>`;
+
+            const body = { count: 3, avoid: generatedTitles };
+            if (direction) body.direction = direction;
+
+            const ideas = await api('/api/generate', { method: 'POST', body });
+            generatedTitles.push(...ideas.map(i => i.title));
+
+            container.innerHTML = ideas.map(renderIdeaCard).join('');
+            loadInterests();
+        }
+
+        // ── Render ──
+
+        function renderIdeaCard(idea) {
+            const tags = idea.tags.map(t => `<span class="tag">${t}</span>`).join('');
+            return `
+                <div class="idea-card" id="idea-${idea.id}">
+                    <span class="category">${idea.category}</span>
+                    <h3>${esc(idea.title)}</h3>
+                    <p class="one-liner">${esc(idea.one_liner)}</p>
+                    <p class="description">${esc(idea.description)}</p>
+                    <dl class="idea-meta">
+                        <div><dt>Market</dt><dd>${esc(idea.market_angle)}</dd></div>
+                        <div><dt>For you</dt><dd>${esc(idea.personal_angle)}</dd></div>
+                        <div><dt>Users</dt><dd>${esc(idea.target_users)}</dd></div>
+                        <div><dt>Revenue</dt><dd>${esc(idea.monetization)}</dd></div>
+                    </dl>
+                    <div class="idea-tags">${tags}</div>
+                    <span style="font-size:0.8rem;color:var(--text-dim)">Complexity: ${idea.complexity}</span>
+                    <div class="reactions" id="reactions-${idea.id}">
+                        <button class="react-btn love" onclick="react(${idea.id},'love',this)">Love it!</button>
+                        <button class="react-btn like" onclick="react(${idea.id},'like',this)">Like</button>
+                        <button class="react-btn meh" onclick="react(${idea.id},'meh',this)">Meh</button>
+                        <button class="react-btn dislike" onclick="react(${idea.id},'dislike',this)">Pass</button>
+                        <button class="react-btn save" onclick="react(${idea.id},'save',this)">Save</button>
+                        <button class="react-btn explore" onclick="explore(${idea.id})">Explore</button>
+                    </div>
+                    <div id="explore-${idea.id}"></div>
+                </div>`;
+        }
+
+        // ── React ──
+
+        async function react(ideaId, reaction, btn) {
+            // Highlight the selected button
+            const container = document.getElementById('reactions-' + ideaId);
+            container.querySelectorAll('.react-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            await api('/api/react', {
+                method: 'POST',
+                body: { idea_id: ideaId, reaction }
+            });
+
+            loadInterests();
+        }
+
+        async function explore(ideaId) {
+            const el = document.getElementById('explore-' + ideaId);
+            el.innerHTML = '<div class="loading-overlay"><div class="spinner"></div> Diving deeper...</div>';
+
+            const details = await api('/api/explore/' + ideaId);
+
+            let html = '<div class="explore-panel"><h4>Deep Dive</h4>';
+            if (details.expanded_description) html += `<p>${esc(details.expanded_description)}</p>`;
+            if (details.key_features) {
+                html += '<h5>Key Features</h5><ul>' +
+                    details.key_features.map(f => `<li>${esc(f)}</li>`).join('') + '</ul>';
+            }
+            if (details.tech_stack) html += `<h5>Tech Stack</h5><p>${esc(details.tech_stack)}</p>`;
+            if (details.mvp_scope) html += `<h5>MVP Scope</h5><p>${esc(details.mvp_scope)}</p>`;
+            if (details.differentiators) html += `<h5>What Makes It Unique</h5><p>${esc(details.differentiators)}</p>`;
+            if (details.challenges) {
+                html += '<h5>Challenges</h5><ul>' +
+                    details.challenges.map(c => `<li>${esc(c)}</li>`).join('') + '</ul>';
+            }
+            if (details.similar_apps) {
+                html += '<h5>Similar Apps</h5><ul>' +
+                    details.similar_apps.map(a => `<li>${esc(a)}</li>`).join('') + '</ul>';
+            }
+            if (details.revenue_potential) html += `<h5>Revenue Potential</h5><p>${esc(details.revenue_potential)}</p>`;
+            html += '</div>';
+            el.innerHTML = html;
+
+            // Also mark as explore reaction
+            await api('/api/react', { method: 'POST', body: { idea_id: ideaId, reaction: 'explore' } });
+            loadInterests();
+        }
+
+        // ── Saved ──
+
+        async function loadSaved() {
+            const container = document.getElementById('saved-container');
+            container.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+            const ideas = await api('/api/saved');
+            if (ideas.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-dim)">No saved ideas yet. Generate some and react with Save or Love!</p>';
+                return;
+            }
+            container.innerHTML = ideas.map(renderIdeaCard).join('');
+        }
+
+        // ── Profile ──
+
+        async function loadProfile() {
+            const container = document.getElementById('profile-container');
+            container.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+            const data = await api('/api/profile');
+
+            let html = '';
+
+            if (data.interests.length > 0) {
+                html += '<div class="profile-panel"><h3 style="margin-bottom:1rem">Interests</h3>';
+                for (const i of data.interests) {
+                    const pct = Math.round(i.weight * 100);
+                    html += `<div class="interest-bar-row">
+                        <span class="interest-bar-label">${esc(i.topic)}</span>
+                        <div class="interest-bar-track">
+                            <div class="interest-bar-fill" style="width:${pct}%"></div>
+                        </div>
+                        <span class="interest-bar-pct">${pct}%</span>
+                    </div>`;
+                }
+                html += '</div>';
+            } else {
+                html += '<p style="color:var(--text-dim)">No interests learned yet. React to ideas to build your profile!</p>';
+            }
+
+            if (data.directions.length > 0) {
+                html += '<div class="profile-panel"><h3 style="margin-bottom:1rem">Recent Directions</h3>';
+                for (const d of data.directions) {
+                    html += `<p style="color:var(--text-dim);margin-bottom:0.3rem">${esc(d.direction)}</p>`;
+                }
+                html += '</div>';
+            }
+
+            if (data.sessions.length > 0) {
+                html += '<div class="profile-panel"><h3 style="margin-bottom:1rem">Session History</h3>';
+                for (const s of data.sessions) {
+                    html += `<p style="margin-bottom:0.3rem">
+                        <span style="color:var(--accent)">${esc(s.direction)}</span>
+                        — ${s.ideas_generated} ideas, ${s.ideas_liked} liked
+                        <span style="color:var(--text-dim);font-size:0.8rem"> (${s.started_at})</span>
+                    </p>`;
+                }
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // ── Util ──
+
+        function esc(s) {
+            if (!s) return '';
+            const el = document.createElement('span');
+            el.textContent = s;
+            return el.innerHTML;
+        }
+
+        // ── Start ──
+        init();
+    </script>
+</body>
+</html>
